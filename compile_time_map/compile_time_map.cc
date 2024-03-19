@@ -6,7 +6,7 @@
 #include <optional>
 
 struct NoneValue {
-    constexpr NoneValue(){}
+	constexpr NoneValue(){}
 };
 
 template<std::size_t Size>
@@ -31,40 +31,38 @@ template<typename KeyType, typename... Pairs>
 struct LiteralMap
 {
 private:
-    template<LiteralString Key>
-    struct LiteralKeyValue
-    {
-        LiteralKeyValue(KeyType&& i_value):value(i_value){}
-        LiteralKeyValue(NoneValue i_value){}
+    	template<LiteralString Key>
+    	struct LiteralKeyValue
+    	{
+        	LiteralKeyValue(KeyType&& i_value):value(i_value){}
+        	LiteralKeyValue(NoneValue i_value){}
 
-        static constexpr auto key = Key;
-        std::optional<KeyType> value;
-    };
+        	static constexpr auto key = Key;
+        	std::optional<KeyType> value;
+    	};
 public:
+	LiteralMap():map(Pairs::value...){}
+	std::tuple<LiteralKeyValue<Pairs::key>...> map;
 
-	 LiteralMap():map(Pairs::value...){}
-
-	 std::tuple<LiteralKeyValue<Pairs::key>...> map;
-
-	 template<LiteralString Key>
-	 KeyType get(KeyType&& default_value = KeyType()){
+	template<LiteralString Key>
+	KeyType get(KeyType&& default_value = KeyType()){
 	 	return std::get<LiteralKeyValue<Key>>(map).value.value_or(default_value);
-	 }
+	}
     
-    template<LiteralString Key>
-    void set(KeyType&& value ){
-        return std::get<LiteralKeyValue<Key>>(map).value = value;
-    }
+    	template<LiteralString Key>
+    	void set(KeyType&& value ){
+        	return std::get<LiteralKeyValue<Key>>(map).value = value;
+    	}
     
-    template<LiteralString Key>
-    bool contains(){
-        return std::get<LiteralKeyValue<Key>>(map).value.has_value();
-    }
+    	template<LiteralString Key>
+    	bool contains(){
+        	return std::get<LiteralKeyValue<Key>>(map).value.has_value();
+    	}
     
-    template<LiteralString Key>
-    void erase(){
-        return std::get<LiteralKeyValue<Key>>(map).value.reset();
-    }
+    	template<LiteralString Key>
+    	void erase(){
+        	return std::get<LiteralKeyValue<Key>>(map).value.reset();
+    	}
 };
 
 int main()
